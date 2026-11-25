@@ -1,0 +1,155 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Command and JSON reference — Article Check 0.1.0</title><meta name="description" content="Practical documentation for the MIT-licensed offline Article Check utility: installation, command reference and troubleshooting."><link rel="stylesheet" href="style.css"></head><body><header><a href="index.html">SEO Writer Article Check</a><span>0.1.0</span></header><nav aria-label="Documentation"><a href="index.html">Quick start</a><a href="reference.html">Reference</a><a href="troubleshooting.html">Troubleshooting</a><a href="https://github.com/Gurzuf92/seo-writer-article-check">Source / MIT</a></nav><main><article><h1>Command and JSON reference</h1>
+<p>This reference describes Article Check 0.1.0. The implementation is in <a href="https://github.com/Gurzuf92/seo-writer-article-check/blob/main/article_check.py">article_check.py</a>.</p>
+<h2>Command line</h2>
+<pre><code class="language-text">python article_check.py FILE [--json] [--fail-on {error,warning,never}]
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Argument</th>
+<th>Behaviour</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FILE</td>
+<td>One local UTF-8 or UTF-8-BOM HTML file, at most 5 MiB</td>
+</tr>
+<tr>
+<td>--json</td>
+<td>Print the report as machine-readable JSON</td>
+</tr>
+<tr>
+<td>--fail-on error</td>
+<td>Default: exit 1 when an error finding exists</td>
+</tr>
+<tr>
+<td>--fail-on warning</td>
+<td>Exit 1 for warning or error findings</td>
+</tr>
+<tr>
+<td>--fail-on never</td>
+<td>Exit 0 after a successful inspection, preserving findings</td>
+</tr>
+</tbody>
+</table>
+<p>Exit 2 means invalid arguments, an unreadable input or an input beyond the size limit. <code>--fail-on never</code> does not suppress argument and file-reading failures.</p>
+<h2>JSON report fields</h2>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>version</td>
+<td>Utility version</td>
+</tr>
+<tr>
+<td>title</td>
+<td>Whitespace-normalized document title</td>
+</tr>
+<tr>
+<td>h1_count, headings</td>
+<td>Visible heading inventory; headings contain level and text</td>
+</tr>
+<tr>
+<td>words, text_scope</td>
+<td>Heuristic word count; article text is preferred when available</td>
+</tr>
+<tr>
+<td>canonicals</td>
+<td>Canonical href values found in the export</td>
+</tr>
+<tr>
+<td>links_found, images_found</td>
+<td>Link and image counts</td>
+</tr>
+<tr>
+<td>json_ld</td>
+<td>Block count, discovered types and invalid block details</td>
+</tr>
+<tr>
+<td>counts</td>
+<td>Finding counts by severity; absent severities need to be read as zero</td>
+</tr>
+<tr>
+<td>findings</td>
+<td>Objects with severity, code and message</td>
+</tr>
+<tr>
+<td>limits</td>
+<td>Reminder of the local parser's scope</td>
+</tr>
+</tbody>
+</table>
+<p>Consumers should tolerate additional fields in future versions. JSON-LD type discovery follows top-level objects, arrays and <code>@graph</code>; it is not a complete vocabulary validator.</p>
+<h2>Finding codes</h2>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Severity</th>
+<th>Review action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>missing_title</td>
+<td>warning</td>
+<td>Check the final CMS title</td>
+</tr>
+<tr>
+<td>h1_count</td>
+<td>warning</td>
+<td>Review zero or multiple visible H1 elements</td>
+</tr>
+<tr>
+<td>canonical_count</td>
+<td>warning</td>
+<td>Review zero or multiple canonical elements</td>
+</tr>
+<tr>
+<td>relative_canonical</td>
+<td>warning</td>
+<td>Verify the absolute public page URL</td>
+</tr>
+<tr>
+<td>invalid_json_ld</td>
+<td>error</td>
+<td>Fix JSON syntax and ensure the value is an object or array</td>
+</tr>
+<tr>
+<td>no_json_ld</td>
+<td>info</td>
+<td>Check whether the CMS adds markup; markup is not a citation requirement</td>
+</tr>
+<tr>
+<td>active_link</td>
+<td>warning</td>
+<td>Review javascript:, data: or vbscript: links</td>
+</tr>
+<tr>
+<td>missing_alt</td>
+<td>warning</td>
+<td>Add appropriate alt attributes; empty alt is valid for decorative images</td>
+</tr>
+<tr>
+<td>no_text</td>
+<td>warning</td>
+<td>Check the export; the parser does not execute JavaScript</td>
+</tr>
+</tbody>
+</table>
+<p>The script hides obvious inline-hidden content and excludes scripts, styles and templates from static text. External CSS and malformed HTML can produce differences from a browser.</p>
+<h2>Python use</h2>
+<pre><code class="language-python">from article_check import inspect_html
+
+report = inspect_html(&quot;&lt;html&gt;&lt;title&gt;Draft&lt;/title&gt;&lt;article&gt;&lt;h1&gt;Draft&lt;/h1&gt;&lt;p&gt;Hello.&lt;/p&gt;&lt;/article&gt;&lt;/html&gt;&quot;)
+errors = report[&quot;counts&quot;].get(&quot;error&quot;, 0)
+for finding in report[&quot;findings&quot;]:
+    print(finding[&quot;severity&quot;], finding[&quot;code&quot;])
+</code></pre>
+<p><code>inspect_html</code> returns a dictionary and does not apply the CLI file-size guard. Read and bound external input in your caller when embedding it. This utility is separate from the commercial <a href="https://ai-seowriter.ru/en">SEO Writer publishing service</a>.</p></article></main><footer>SEO Writer team · Documentation updated 26 November 2026 · MIT license</footer></body></html>

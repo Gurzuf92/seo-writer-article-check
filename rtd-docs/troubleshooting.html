@@ -1,0 +1,20 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Troubleshooting a preflight report — Article Check 0.1.0</title><meta name="description" content="Practical documentation for the MIT-licensed offline Article Check utility: installation, command reference and troubleshooting."><link rel="stylesheet" href="style.css"></head><body><header><a href="index.html">SEO Writer Article Check</a><span>0.1.0</span></header><nav aria-label="Documentation"><a href="index.html">Quick start</a><a href="reference.html">Reference</a><a href="troubleshooting.html">Troubleshooting</a><a href="https://github.com/Gurzuf92/seo-writer-article-check">Source / MIT</a></nav><main><article><h1>Troubleshooting a preflight report</h1>
+<p>Use this guide for Article Check 0.1.0. Start with a small local reproduction, not a private production export shared in a public issue.</p>
+<h2>The command exits with code 2</h2>
+<p>Check the path, quote paths containing spaces, confirm the file is readable and saved as UTF-8, and keep it below 5 MiB. A website URL is not a supported input. Export the document first.</p>
+<h2>A CMS export has no title or canonical</h2>
+<p>That can be expected when the export contains only article-body HTML. Review what the CMS adds in its preview and public page. The tool reports an incomplete local document; it does not know the eventual permalink or your SEO plugin's configuration.</p>
+<h2>An image is decorative</h2>
+<p>An explicitly empty <code>alt=""</code> is accepted. A missing alt attribute is reported. Decide the correct text based on the image's role; do not insert a keyword list solely to silence the warning.</p>
+<h2>JSON-LD parses but the information is wrong</h2>
+<p>The tool checks JSON syntax and basic object/array shape. It does not validate required Schema.org properties, prove factual claims or check agreement with the visible page. Use the <a href="https://validator.schema.org/">Schema.org validator</a> separately and review the actual page content.</p>
+<h2>A command passes but the live page looks broken</h2>
+<p>The local parser does not run the theme, CMS plugins, JavaScript or external CSS. Check the rendered page after import. Plugins can add, remove or change headings, links, media and metadata.</p>
+<h2>I need a non-blocking report in automation</h2>
+<pre><code class="language-sh">python article_check.py export.html --json --fail-on never
+</code></pre>
+<p>The report still contains findings. File-reading and argument failures still exit 2. Use this mode for reporting rather than assuming it certifies the page for publication.</p>
+<h2>Does this improve GEO or guarantee indexing?</h2>
+<p>The report does not measure search visibility or citations. Google's <a href="https://developers.google.com/search/docs/appearance/ai-features">AI features guidance</a> describes requirements for its own search features. Measure search inclusion and observed citations separately.</p>
+<h2>Report a bug safely</h2>
+<p>Include the Python version, the exact command, the expected result and a minimal invented HTML example in the <a href="https://github.com/Gurzuf92/seo-writer-article-check/issues">GitHub issue tracker</a>. Remove private drafts, account details and credentials. The utility is maintained alongside <a href="https://ai-seowriter.ru/en">SEO Writer</a>, while its source and these docs are MIT-licensed and usable on their own.</p></article></main><footer>SEO Writer team · Documentation updated 26 November 2026 · MIT license</footer></body></html>

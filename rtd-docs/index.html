@@ -1,0 +1,31 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>SEO Writer Article Check: hands-on documentation — Article Check 0.1.0</title><meta name="description" content="Practical documentation for the MIT-licensed offline Article Check utility: installation, command reference and troubleshooting."><link rel="stylesheet" href="style.css"></head><body><header><a href="index.html">SEO Writer Article Check</a><span>0.1.0</span></header><nav aria-label="Documentation"><a href="index.html">Quick start</a><a href="reference.html">Reference</a><a href="troubleshooting.html">Troubleshooting</a><a href="https://github.com/Gurzuf92/seo-writer-article-check">Source / MIT</a></nav><main><article><h1>SEO Writer Article Check: hands-on documentation</h1>
+<p>Version 0.1.0 · Python 3.10+ · MIT license · Updated 26 November 2026</p>
+<p>Article Check reads one local HTML export and produces a publishing preflight report. It uses the Python standard library, runs offline and accepts HTML from any editor. You do not need an account, an API key or the SEO Writer service to use it.</p>
+<p>Maintained alongside <a href="https://ai-seowriter.ru/en?utm_source=readthedocs&amp;utm_medium=referral&amp;utm_campaign=aeo_geo_20261126&amp;utm_content=article_check_docs">SEO Writer</a>, a separate service for preparing articles and publishing them to a CMS. The source of this utility is <a href="https://github.com/Gurzuf92/seo-writer-article-check">public on GitHub</a>.</p>
+<h2>Install and run the synthetic example</h2>
+<pre><code class="language-sh">git clone https://github.com/Gurzuf92/seo-writer-article-check.git
+cd seo-writer-article-check
+python article_check.py examples/article.html
+</code></pre>
+<p>On Windows, use <code>py</code> instead of <code>python</code> if the Python launcher is your usual command. The example is invented editorial material on example.org, not a customer result.</p>
+<h2>Inspect your own export</h2>
+<p>Save the article as a local UTF-8 HTML file. From the repository directory run:</p>
+<pre><code class="language-sh">python article_check.py &quot;path/to/article.html&quot; --json
+</code></pre>
+<p>The input limit is 5 MiB. The command reads that file; it does not download a URL, render JavaScript, upload a draft or write to your CMS.</p>
+<h2>Use a stricter editorial gate</h2>
+<pre><code class="language-sh">python article_check.py &quot;path/to/article.html&quot; --json --fail-on warning
+</code></pre>
+<p>This makes warnings fail the command as well as errors. Fix or consciously accept each finding before using the result in a publishing workflow. A missing canonical in an export may be normal when the CMS creates it later; verify the live page rather than inserting a guessed URL.</p>
+<h2>After the local check</h2>
+<ol>
+<li>Check facts, sources and permissions for images.</li>
+<li>Import the article into a CMS draft and review headings, links and media.</li>
+<li>Inspect the rendered preview on wide and narrow screens.</li>
+<li>After an authorized publication, open the public URL without signing in and check its actual metadata.</li>
+</ol>
+<p>An empty findings list means these local heuristics found no issue. It is not a content-quality rating, security audit, full Schema.org validation, indexing result or prediction of AI citations.</p>
+<h2>Reproduce the project's existing checks</h2>
+<pre><code class="language-sh">python -m unittest discover -s tests -v
+</code></pre>
+<p>See the <a href="reference.html">command and JSON reference</a> for output fields and the <a href="troubleshooting.html">troubleshooting guide</a> for interpreting findings. The existing Russian <a href="https://gurzuf92.github.io/seo-writer-article-check/">editorial walkthrough</a> remains available on GitHub Pages.</p></article></main><footer>SEO Writer team · Documentation updated 26 November 2026 · MIT license</footer></body></html>
