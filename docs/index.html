@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Article Check — проверка HTML перед публикацией | SEO Writer</title>
+<meta name="description" content="Открытая утилита SEO Writer: локальная проверка HTML, JSON-LD, заголовков, ссылок и alt. Инструкция, пример запуска и ограничения.">
+<link rel="canonical" href="https://gurzuf92.github.io/seo-writer-article-check/">
+<style>
+:root{font:17px/1.65 system-ui,sans-serif;color:#182432;background:#f5f7f9}*{box-sizing:border-box}body{margin:0}header,main,footer{max-width:920px;margin:auto;padding:28px 24px}header{border-bottom:1px solid #d9e0e7}nav{display:flex;gap:18px;flex-wrap:wrap}a{color:#125ab3;text-underline-offset:3px}h1{font-size:clamp(2rem,6vw,3.2rem);line-height:1.13;letter-spacing:-.035em;margin:18px 0}h2{line-height:1.25;margin-top:52px}h3{line-height:1.35}p{max-width:75ch}.eyebrow{color:#536477;font-size:.9rem}pre{padding:20px;background:#172536;color:#e6f1fc;border-radius:8px;overflow:auto;line-height:1.55;font-size:.88rem}code{font-family:ui-monospace,monospace;overflow-wrap:anywhere}pre code{overflow-wrap:normal}.note{border-left:3px solid #3879bc;padding:10px 20px;background:#eaf1f8}li{margin:9px 0}.table{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:.94rem}th,td{padding:13px 12px;border-bottom:1px solid #d9e0e7;vertical-align:top;text-align:left}footer{border-top:1px solid #d9e0e7;color:#536477;font-size:.9rem}section{scroll-margin-top:25px}@media(max-width:520px){header,main,footer{padding:22px 18px}pre{padding:15px}}
+</style>
+</head>
+<body>
+<header>
+<nav aria-label="Навигация"><a href="#start">Запуск</a><a href="#checks">Проверки</a><a href="#workflow">Чек-лист редактора</a><a href="#limits">Ограничения</a><a href="https://github.com/Gurzuf92/seo-writer-article-check">GitHub</a></nav>
+<p class="eyebrow">Документация открытого проекта · версия 1.0.0 · 26 ноября 2026</p>
+<h1>Проверьте HTML до публикации</h1>
+<p>Article Check читает локальный HTML-файл и помогает заметить сломанную JSON-LD разметку, пропущенный заголовок, изображения без alt и подозрительные ссылки. Python, стандартная библиотека, один файл.</p>
+<p>Проект команды <a href="https://ai-seowriter.ru/?utm_source=github_pages&amp;utm_medium=referral&amp;utm_campaign=aeo_geo_20261126&amp;utm_content=article_check_docs">SEO Writer — сервиса подготовки статей и публикации в CMS</a>. Утилита работает с экспортом из любого редактора.</p>
+</header>
+<main>
+<article>
+<section id="start">
+<h2>Быстрый запуск</h2>
+<p>Нужен Python 3.10 или новее. Аккаунт, ключ API и установка пакетов не требуются.</p>
+<pre><code>git clone https://github.com/Gurzuf92/seo-writer-article-check.git
+cd seo-writer-article-check
+python article_check.py examples/article.html
+python article_check.py export.html --json</code></pre>
+<p>В Windows можно использовать команду <code>py</code> вместо <code>python</code>. Файл должен быть в UTF-8 и занимать не больше 5 МиБ. В репозитории есть <a href="https://github.com/Gurzuf92/seo-writer-article-check/blob/main/examples/article.html">учебный HTML-пример</a> с вымышленным адресом example.org.</p>
+<h3>Как читать результат</h3>
+<pre><code>Article Check 1.0.0: How to review an AI-assisted article before publishing
+Words: …; H1: 1; JSON-LD blocks: 1</code></pre>
+<p>Количество слов — справочная величина. Утилита не задаёт оптимальную длину статьи. Полный JSON содержит заголовки, типы разметки и список замечаний.</p>
+<p><code>error</code> означает некорректный JSON-LD. <code>warning</code> предлагает проверить элемент вручную. <code>info</code> сообщает о контексте экспорта. По умолчанию код 1 возвращается только при ошибке; режим <code>--fail-on warning</code> учитывает и предупреждения. Код 2 означает ошибку входного файла или аргументов.</p>
+</section>
+<section id="checks">
+<h2>Что проверяется</h2>
+<div class="table"><table><thead><tr><th>Элемент</th><th>Что означает замечание</th></tr></thead><tbody>
+<tr><td>Title и H1</td><td>Проверьте название и видимый заголовок конечной страницы. CMS может добавлять их отдельно от текста.</td></tr>
+<tr><td>Текст и подзаголовки</td><td>Инвентарь статического HTML. При наличии article считается текст статьи, а не меню.</td></tr>
+<tr><td>Canonical</td><td>Проверьте один абсолютный адрес основной страницы. В экспорте редактора метаданных может не быть.</td></tr>
+<tr><td>JSON-LD</td><td>Проверяются синтаксис JSON и форма объекта или массива. Типы перечисляются для обычных блоков и @graph.</td></tr>
+<tr><td>Изображения</td><td>Отсутствующий alt отмечается. Пустой alt допустим у декоративной картинки.</td></tr>
+<tr><td>Ссылки</td><td>Схемы javascript:, data: и vbscript: требуют ручного просмотра. Доступность URL не проверяется.</td></tr>
+</tbody></table></div>
+<p>Проверить воспроизводимые сценарии: <code>python -m unittest discover -s tests -v</code>. Исходники, учебный пример, история изменений и MIT-лицензия находятся в репозитории.</p>
+</section>
+<section id="workflow">
+<h2>Редакторский чек-лист после проверки</h2>
+<ol>
+<li><strong>Один вопрос.</strong> Читатель понимает, какую задачу решает статья и кому подходит ответ.</li>
+<li><strong>Проверяемые факты.</strong> Цены, ограничения и названия функций сверены с первоисточником. Учебный пример обозначен как учебный.</li>
+<li><strong>Самостоятельный ответ.</strong> Главный раздел можно понять без чтения нескольких предыдущих экранов. Есть условия и ограничения.</li>
+<li><strong>Рабочие ссылки и медиа.</strong> Ссылки ведут на нужные страницы; права на изображения понятны; содержательные картинки имеют подходящий alt.</li>
+<li><strong>Разметка соответствует тексту.</strong> Article описывает статью, FAQ — реальные вопросы и ответы, HowTo — существующие шаги. Не добавляйте блок ради количества типов.</li>
+<li><strong>Предпросмотр в CMS.</strong> Заголовки, таблицы, ссылки, изображения и мобильная версия сохраняются после импорта.</li>
+<li><strong>Живая страница.</strong> После публикации проверьте итоговый адрес, статус, видимый текст и разметку ещё раз: шаблон и плагины могут изменить экспорт.</li>
+</ol>
+<p>В процессе работы с SEO Writer утилита полезна между редактурой и публикацией: экспортируйте HTML, разберите замечания, затем проверьте предпросмотр. <a href="https://ai-seowriter.ru/wordpress?utm_source=github_pages&amp;utm_medium=referral&amp;utm_campaign=aeo_geo_20261126&amp;utm_content=wordpress_workflow">Подключение SEO Writer к WordPress</a> описано на сайте сервиса.</p>
+</section>
+<section id="limits">
+<h2>Что инструмент не измеряет</h2>
+<p>Article Check не делает сетевых запросов, не исполняет JavaScript и не передаёт текст третьим лицам. Он не проверяет индексирование, сервер, внешние CSS, полноту Schema.org, достоверность текста или вероятность цитирования в ответах ИИ.</p>
+<p class="note">Google не требует специальной AI-разметки для участия в своих ИИ-функциях. Подготовка контента и техническая корректность не гарантируют ни индексирование, ни цитирование.</p>
+<p>Синтаксически правильный JSON может содержать неверные свойства или описывать отсутствующий на странице контент. Для проверки словаря используйте отдельный валидатор, а содержание сверяйте вручную.</p>
+<h3>Источники и следующие шаги</h3>
+<ul><li><a href="https://developers.google.com/search/docs/appearance/ai-features">Google Search Central: AI features and your website</a></li><li><a href="https://validator.schema.org/">Валидатор Schema.org</a></li><li><a href="https://github.com/Gurzuf92/seo-writer-article-check/issues">Сообщить об ошибке с минимальным учебным HTML-примером</a></li></ul>
+<p>Исходный HTML не загружается на этот сайт: здесь находится документация, инструмент запускается на вашем устройстве.</p>
+</section>
+</article>
+</main>
+<footer>SEO Writer Article Check · MIT · <a href="https://github.com/Gurzuf92/seo-writer-article-check/blob/main/CHANGELOG.md">История изменений</a> · Учебные примеры не являются клиентскими результатами.</footer>
+</body>
+</html>
